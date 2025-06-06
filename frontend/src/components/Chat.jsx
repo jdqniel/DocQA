@@ -189,15 +189,18 @@ const Chat = () => {
 
     return (
         <div className="app-container">
+            <header className="app-header">
+                <button
+                    className="toggle-sidebar"
+                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    aria-label="Toggle sidebar"
+                >
+                    {/* Hamburger/Close icon will be created with CSS pseudo-elements */}
+                </button>
+            </header>
+
             <aside className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
                 <div className="sidebar-header">
-                    <button
-                        className="toggle-sidebar"
-                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        aria-label="Toggle sidebar"
-                    >
-                        {/* Hamburger icon will be created with CSS pseudo-elements */}
-                    </button>
                     <button className="new-chat-button" onClick={handleNewChat}>
                         <span>+</span> New chat
                     </button>
@@ -233,14 +236,18 @@ const Chat = () => {
                         </button>
                     </div>
                 )}
-                <div className="messages-container">
-                    {messages.length === 0 ? (
+                {messages.length === 0 && (
+                    <div className="messages-container">
                         <div className="welcome-message">
                             <h1>Document Chat</h1>
                             <p>Ask me anything about the document!</p>
                         </div>
-                    ) : (
-                        messages.map((message, index) => (
+                    </div>
+                )}
+
+                {messages.length > 0 && (
+                    <div className="messages-container">
+                        {messages.map((message, index) => (
                             <div key={index} className={`message-wrapper ${message.role}`}>
                                 <div className="message-container">
                                     <div className="message-content">
@@ -248,26 +255,21 @@ const Chat = () => {
                                     </div>
                                 </div>
                             </div>
-                        ))
-                    )}
+                        ))}
 
-                    {streamingMessageId && (
-                        <div className="message-wrapper assistant">
-                            <div className="message-container">
-                                <div className="message-content">
-                                    {streamingContent}
-                                    <span className="cursor" style={{
-                                        opacity: streamingContent ? 1 : 0,
-                                        animation: 'blink 1s infinite',
-                                        marginLeft: '2px'
-                                    }}>|</span>
+                        {isLoading && streamingMessageId && (
+                            <div key={streamingMessageId} className="message-wrapper assistant">
+                                <div className="message-container">
+                                    <div className="message-content">
+                                        {streamingContent || '...'}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    <div ref={messagesEndRef} />
-                </div>
+                        <div ref={messagesEndRef} />
+                    </div>
+                )}
 
                 <div className="input-container">
                     <form onSubmit={handleSubmit} className="input-form">
